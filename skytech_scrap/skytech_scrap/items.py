@@ -9,7 +9,6 @@ import scrapy
 class SkytechScrapItem(scrapy.Item):
     # define the fields for your item here like:
     name = scrapy.Field()
-    # number = scrapy.Field()
     price = scrapy.Field()
     number = scrapy.Field()
-    # image=scrapy.Field()
+    image=scrapy.Field()
