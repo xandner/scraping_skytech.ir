@@ -28,7 +28,6 @@ class SkytechScrapPipeline:
 
     def insert_data(self, item):
 
-        if len(item['name']) >= 1:
             name = []
             price = []
             number = []
@@ -49,15 +48,6 @@ class SkytechScrapPipeline:
                     image[i]
                 ))
                 self.conn.commit()
-        else:
-            self.curr.execute("""insert into my_table values (?,?,?,?)""", (
-                item['name'][0],
-                item['price'][0],
-                item['price'][2],
-                item['image'][0]
-            ))
-            self.conn.commit()
-
     def sort_data(self, name, item):
         for i in name:
             self.insert_name(i)

@@ -3,16 +3,19 @@ from ..items import SkytechScrapItem
 
 
 class SkythechDpider(scrapy.Spider):
+    def __init__(self):
+        self.crawled=set()
     name = 'skythech'
     start_urls = ['http://skytech.ir/']
     BASE_URL = 'http://skytech.ir/'
 
     def parse(self, response):
+
         if response.url == self.BASE_URL:
 
-            all_tag_products = response.css('ul#sideManu')
+            all_tag_products = response.xpath("//ul[@id='sideManu']")
             for all_tag_product in all_tag_products:
-                products = all_tag_product.css("li.subMenu ul table")
+                products = all_tag_product.xpath("//li[@class='subMenu']/ul/table")
 
                 for product in products:
                     product_url = product.css('tr td li a::attr(href)').extract()
@@ -29,19 +32,18 @@ class SkythechDpider(scrapy.Spider):
                 "//div[@class='caption']/h5/span[@class=re:test(@class,'ContentPlaceHolder*Pre_PRICELabel*')]/font/text()").extract()
             for image_url in pic:
                 img.append(response.urljoin(image_url))
-            if len(name) >= 1 and len(price) >= 1:
-                name_ = []
-                if len(name) <= 1:
-                    for i in name:
-                        name_.append(i)
-                    items['name'] = name_
-                    items['price'] = price
-                    items['number'] = price
-                    items['image'] = img
+            items['name'] = name
+            items['price'] = price
+            items['number'] = price
+            items['image'] = img
+            yield items
 
-                else:
-                    items['name'] = name
-                    items['price'] = price
-                    items['number'] = price
-                    items['image'] = img
-                yield items
+            next_page=response.css('div span a::attr(href)').extract()
+            if next_page is not None:
+                for url in next_page:
+                    final_product_url = response.urljoin(url)
+                    if final_product_url not in self.crawled:
+                        self.crawled.add(final_product_url)
+                        yield scrapy.Request(final_product_url, callback=self.parse)
+
+
