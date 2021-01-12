@@ -3,8 +3,7 @@ from ..items import SkytechScrapItem
 
 
 class SkythechDpider(scrapy.Spider):
-    def __init__(self):
-        self.crawled=set()
+    crawled=set()
     name = 'skythech'
     start_urls = ['http://skytech.ir/']
     BASE_URL = 'http://skytech.ir/'
